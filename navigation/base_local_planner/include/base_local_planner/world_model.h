@@ -57,10 +57,7 @@ namespace base_local_planner {
        * @param  footprint The specification of the footprint of the robot in world coordinates
        * @param  inscribed_radius The radius of the inscribed circle of the robot
        * @param  circumscribed_radius The radius of the circumscribed circle of the robot
-       * @return Positive if all the points lie outside the footprint, negative otherwise:
-       *          -1 if footprint covers at least a lethal obstacle cell, or
-       *          -2 if footprint covers at least a no-information cell, or
-       *          -3 if footprint is partially or totally outside of the map
+       * @return Positive if all the points lie outside the footprint, negative otherwise
        */
       virtual double footprintCost(const geometry_msgs::Point& position, const std::vector<geometry_msgs::Point>& footprint,
           double inscribed_radius, double circumscribed_radius) = 0;
@@ -70,6 +67,8 @@ namespace base_local_planner {
         double cos_th = cos(theta);
         double sin_th = sin(theta);
         std::vector<geometry_msgs::Point> oriented_footprint;
+
+        //1.获取移动后的机器人外轮廓位置
         for(unsigned int i = 0; i < footprint_spec.size(); ++i){
           geometry_msgs::Point new_pt;
           new_pt.x = x + (footprint_spec[i].x * cos_th - footprint_spec[i].y * sin_th);
@@ -81,6 +80,7 @@ namespace base_local_planner {
         robot_position.x = x;
         robot_position.y = y;
 
+        //2.计算机器人轮廓的内切圆和外切圆
         if(inscribed_radius==0.0){
           costmap_2d::calculateMinAndMaxDistances(footprint_spec, inscribed_radius, circumscribed_radius);
         }
@@ -98,7 +98,7 @@ namespace base_local_planner {
        */
       double footprintCost(const geometry_msgs::Point& position, const std::vector<geometry_msgs::Point>& footprint,
           double inscribed_radius, double circumscribed_radius, double extra) {
-        return footprintCost(position, footprint, inscribed_radius, circumscribed_radius);
+        return footprintCost(position, footprint, inscribed_radius, circumscribed_radius); 
       }
 
       /**

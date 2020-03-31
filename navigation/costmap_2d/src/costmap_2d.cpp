@@ -37,6 +37,7 @@
  *********************************************************************/
 #include <costmap_2d/costmap_2d.h>
 #include <cstdio>
+#include <ros/ros.h>
 
 using namespace std;
 
@@ -72,10 +73,12 @@ void Costmap2D::initMaps(unsigned int size_x, unsigned int size_y)
 void Costmap2D::resizeMap(unsigned int size_x, unsigned int size_y, double resolution,
                           double origin_x, double origin_y)
 {
+
+  ROS_INFO("resizeMpa: size_x:%d,origin_x:%d",size_x,origin_x);
   size_x_ = size_x;
+  origin_x_ = origin_x;
   size_y_ = size_y;
   resolution_ = resolution;
-  origin_x_ = origin_x;
   origin_y_ = origin_y;
 
   initMaps(size_x, size_y);
@@ -213,6 +216,7 @@ bool Costmap2D::worldToMap(double wx, double wy, unsigned int& mx, unsigned int&
   mx = (int)((wx - origin_x_) / resolution_);
   my = (int)((wy - origin_y_) / resolution_);
 
+
   if (mx < size_x_ && my < size_y_)
     return true;
 
@@ -260,12 +264,18 @@ void Costmap2D::worldToMapEnforceBounds(double wx, double wy, int& mx, int& my) 
 void Costmap2D::updateOrigin(double new_origin_x, double new_origin_y)
 {
   // project the new origin into the grid
+    /****************************************
+     * 计算新的原点位置,单位是cell
+     ***************************************/
   int cell_ox, cell_oy;
   cell_ox = int((new_origin_x - origin_x_) / resolution_);
   cell_oy = int((new_origin_y - origin_y_) / resolution_);
 
   // compute the associated world coordinates for the origin cell
   // because we want to keep things grid-aligned
+  /****************************************
+   * 计算新的原点位置,单位是米
+   ***************************************/
   double new_grid_ox, new_grid_oy;
   new_grid_ox = origin_x_ + cell_ox * resolution_;
   new_grid_oy = origin_y_ + cell_oy * resolution_;
@@ -273,14 +283,18 @@ void Costmap2D::updateOrigin(double new_origin_x, double new_origin_y)
   // To save casting from unsigned int to int a bunch of times
   int size_x = size_x_;
   int size_y = size_y_;
-
+  /****************************************
+   * 计算需要保存的数据窗口大小,及现在的窗口和之前窗口的重叠区域
+   ***************************************/
   // we need to compute the overlap of the new and existing windows
   int lower_left_x, lower_left_y, upper_right_x, upper_right_y;
   lower_left_x = min(max(cell_ox, 0), size_x);
   lower_left_y = min(max(cell_oy, 0), size_y);
   upper_right_x = min(max(cell_ox + size_x, 0), size_x);
   upper_right_y = min(max(cell_oy + size_y, 0), size_y);
-
+  /****************************************
+   * 初始化一个数组存储数据
+   ***************************************/
   unsigned int cell_size_x = upper_right_x - lower_left_x;
   unsigned int cell_size_y = upper_right_y - lower_left_y;
 

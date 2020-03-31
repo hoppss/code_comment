@@ -59,11 +59,31 @@ inline double distance(double x0, double y0, double x1, double y1)
 {
   return hypot(x1 - x0, y1 - y0);
 }
-
+/**
+ * @brief distanceToLine    点p到直线01的距离
+ * @param pX                点p的X坐标
+ * @param pY                点p的的Y坐标
+ * @param x0                线上点0的X坐标
+ * @param y0                线上点0的Y坐标
+ * @param x1                线上点1的X坐标
+ * @param y1                线上点1的Y坐标
+ * @return                  点p到直线01的距离
+ */
 double distanceToLine(double pX, double pY, double x0, double y0, double x1, double y1);
-
+/**
+ * @brief intersects  通过射线法判断test点是否在多边形内部
+ * @param polygon     指定的多边形
+ * @param testx       test点x坐标
+ * @param testy       test点y坐标
+ * @return            如果点在多边形内部,则返回true,否则返回false
+ */
 bool intersects(std::vector<geometry_msgs::Point>& polygon, float testx, float testy);
-
+/**
+ * @brief intersects  判断两个多边形是否相交或者包含
+ * @param polygon1    多边形1
+ * @param polygon2    多边形2
+ * @return            如果相交或者包含,返回true否则返回false
+ */
 bool intersects(std::vector<geometry_msgs::Point>& polygon1, std::vector<geometry_msgs::Point>& polygon2);
 
 #endif  // COSTMAP_2D_COSTMAP_MATH_H_
