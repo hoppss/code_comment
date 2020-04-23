@@ -136,7 +136,7 @@ void Costmap2DPublisher::publishCostmap()
     prepareGrid();
     costmap_pub_.publish(grid_);
   }
-  else if (x0_ < xn_)
+  else if (x0_ < xn_) // x0_,xn_ 是个什么逻辑，start? end ?
   {
     boost::unique_lock<Costmap2D::mutex_t> lock(*(costmap_->getMutex()));
     // Publish Just an Update

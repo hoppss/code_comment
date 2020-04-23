@@ -31,6 +31,10 @@
 
 double distanceToLine(double pX, double pY, double x0, double y0, double x1, double y1)
 {
+  //p点，1点 到 0点 的点击，dot 相当于p点在01点上投影，param 相当于cos值（相当于一个比例），判断夹角是否大于90，
+  //xx,yy就是p在01上投影点
+
+  //已知三个点求面积或者垂足，可以用海伦公式
   double A = pX - x0;
   double B = pY - y0;
   double C = x1 - x0;
@@ -61,20 +65,23 @@ double distanceToLine(double pX, double pY, double x0, double y0, double x1, dou
   return distance(pX, pY, xx, yy);
 }
 
+//判断test点是否在多边形区域内，通过判断点是否在直线一侧
 bool intersects(std::vector<geometry_msgs::Point>& polygon, float testx, float testy)
 {
   bool c = false;
   int i, j, nvert = polygon.size();
   for (i = 0, j = nvert - 1; i < nvert; j = i++)
   {
+    //i 是第一个点，j 是最后一个点，polygon 默认是不需要最后一个点等于第一个点
+    //j = i++;  相当于j =i; i=i+1
     float yi = polygon[i].y, yj = polygon[j].y, xi = polygon[i].x, xj = polygon[j].x;
 
-    if (((yi > testy) != (yj > testy)) && (testx < (xj - xi) * (testy - yi) / (yj - yi) + xi))
+    if ( ((yi > testy) != (yj > testy)) && (testx < (xj - xi) * (testy - yi) / (yj - yi) + xi))
       c = !c;
   }
   return c;
 }
-
+//判断两个多边形是否相交
 bool intersects_helper(std::vector<geometry_msgs::Point>& polygon1, std::vector<geometry_msgs::Point>& polygon2)
 {
   for (unsigned int i = 0; i < polygon1.size(); i++)

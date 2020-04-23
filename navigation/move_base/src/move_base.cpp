@@ -660,6 +660,8 @@ void MoveBase::planThread(){
                 timer = n.createTimer(sleep_time, &MoveBase::wakePlanner, this);
             }
         }
+        //hopps
+        clearGlobalObstacleCostmap(1.5,"plan_thread");
     }
 }
 
@@ -672,6 +674,8 @@ void MoveBase::executeCb(const move_base_msgs::MoveBaseGoalConstPtr& move_base_g
         return;
     }
 
+    //add by hopps, for clear global costmap obstacle layer ,for a better global plan
+    clearGlobalObstacleCostmap(1.5, "new_goal");
     //2. 将目标的坐标系转换为全局坐标系
     geometry_msgs::PoseStamped goal = goalToGlobalFrame(move_base_goal->target_pose);
 
@@ -954,7 +958,7 @@ bool MoveBase::executeCycle(geometry_msgs::PoseStamped& goal, std::vector<geomet
             state_ = CLEARING;
             recovery_trigger_ = OSCILLATION_R;
         }
-        
+
     {
         boost::unique_lock<costmap_2d::Costmap2D::mutex_t> lock(*(controller_costmap_ros_->getCostmap()->getMutex()));
         //10. 获取有效速度
@@ -1243,5 +1247,42 @@ bool MoveBase::getRobotPose(geometry_msgs::PoseStamped& global_pose, costmap_2d:
     }
 
     return true;
+}
+
+void MoveBase::clearGlobalObstacleCostmap(double reset_distance, const std::string pos) {
+  std::vector<boost::shared_ptr<costmap_2d::Layer> >* plugins = planner_costmap_ros_->getLayeredCostmap()->getPlugins();
+
+  //1: getCurrentPose
+  geometry_msgs::PoseStamped pose;
+  if (!planner_costmap_ros_->getRobotPose(pose)) {
+    ROS_ERROR("clearGlobalObstacleCostmap, Cannot clear map because pose cannot be retrieved, from: %s", pos.c_str());
+    return;
+  }
+
+  for (std::vector<boost::shared_ptr<costmap_2d::Layer> >::iterator pluginp = plugins->begin(); pluginp != plugins->end(); ++pluginp) {
+    boost::shared_ptr<costmap_2d::Layer> plugin = *pluginp;
+    if (plugin->getName().find("obstacle") != std::string::npos) {
+      boost::shared_ptr<costmap_2d::ObstacleLayer> costmap;  //pointer to obstacle layer
+      costmap = boost::static_pointer_cast<costmap_2d::ObstacleLayer>(plugin);
+      boost::unique_lock<costmap_2d::Costmap2D::mutex_t> lock_planner(*(planner_costmap_ros_->getCostmap()->getMutex()));
+      //costmap->reset();  //invalid api
+      ROS_INFO("ClearGlobalObstacleCostmap -- %s, from: %s", plugin->getName().c_str(), pos.c_str());
+      double start_point_x = pose.pose.position.x - reset_distance / 2;
+      double start_point_y = pose.pose.position.y - reset_distance / 2;
+      double end_point_x = start_point_x + reset_distance;
+      double end_point_y = start_point_y + reset_distance;
+
+      int start_x, start_y, end_x, end_y;
+      costmap->worldToMapNoBounds(start_point_x, start_point_y, start_x, start_y);
+      costmap->worldToMapNoBounds(end_point_x, end_point_y, end_x, end_y);
+
+      costmap->clearArea(start_x, start_y, end_x, end_y);
+
+      double ox = costmap->getOriginX(), oy = costmap->getOriginY();
+      double width = costmap->getSizeInMetersX(), height = costmap->getSizeInMetersY();
+      costmap->addExtraBounds(ox, oy, ox + width, oy + height);
+      lock_planner.unlock();
+    }
+  }
 }
 };

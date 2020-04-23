@@ -47,7 +47,8 @@ void calculateMinAndMaxDistances(const std::vector<geometry_msgs::Point>& footpr
   {
     return;
   }
-
+  //vertex  定点
+  //edge    边
   for (unsigned int i = 0; i < footprint.size() - 1; ++i)
   {
     // check the distance from the robot center point to the first vertex

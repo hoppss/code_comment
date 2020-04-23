@@ -44,8 +44,8 @@ PLUGINLIB_EXPORT_CLASS(clear_costmap_recovery::ClearCostmapRecovery, nav_core::R
 using costmap_2d::NO_INFORMATION;
 
 namespace clear_costmap_recovery {
-ClearCostmapRecovery::ClearCostmapRecovery(): global_costmap_(NULL), local_costmap_(NULL), 
-  tf_(NULL), initialized_(false) {} 
+ClearCostmapRecovery::ClearCostmapRecovery(): global_costmap_(NULL), local_costmap_(NULL),
+  tf_(NULL), initialized_(false) {}
 
 void ClearCostmapRecovery::initialize(std::string name, tf2_ros::Buffer* tf,
     costmap_2d::Costmap2DROS* global_costmap, costmap_2d::Costmap2DROS* local_costmap){
@@ -59,7 +59,7 @@ void ClearCostmapRecovery::initialize(std::string name, tf2_ros::Buffer* tf,
     ros::NodeHandle private_nh("~/" + name_);
 
     private_nh.param("reset_distance", reset_distance_, 3.0);
-    
+
     std::vector<std::string> clearable_layers_default, clearable_layers;
     clearable_layers_default.push_back( std::string("obstacles") );
     private_nh.param("layer_names", clearable_layers, clearable_layers_default);
@@ -121,11 +121,12 @@ void ClearCostmapRecovery::clear(costmap_2d::Costmap2DROS* costmap){
   }
 }
 
-
-void ClearCostmapRecovery::clearMap(boost::shared_ptr<costmap_2d::CostmapLayer> costmap, 
+// 清除的是当前周边reset_distance_方形以外的区域
+// 障碍物指定区域polygon内清零，可参看move_slow_and_clear
+void ClearCostmapRecovery::clearMap(boost::shared_ptr<costmap_2d::CostmapLayer> costmap,
                                         double pose_x, double pose_y){
   boost::unique_lock<costmap_2d::Costmap2D::mutex_t> lock(*(costmap->getMutex()));
- 
+
   double start_point_x = pose_x - reset_distance_ / 2;
   double start_point_y = pose_y - reset_distance_ / 2;
   double end_point_x = start_point_x + reset_distance_;
@@ -138,7 +139,7 @@ void ClearCostmapRecovery::clearMap(boost::shared_ptr<costmap_2d::CostmapLayer> 
   unsigned char* grid = costmap->getCharMap();
   for(int x=0; x<(int)costmap->getSizeInCellsX(); x++){
     bool xrange = x>start_x && x<end_x;
-                   
+
     for(int y=0; y<(int)costmap->getSizeInCellsY(); y++){
       if(xrange && y>start_y && y<end_y)
         continue;

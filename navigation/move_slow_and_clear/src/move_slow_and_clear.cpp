@@ -42,7 +42,7 @@ PLUGINLIB_EXPORT_CLASS(move_slow_and_clear::MoveSlowAndClear, nav_core::Recovery
 
 namespace move_slow_and_clear
 {
-  MoveSlowAndClear::MoveSlowAndClear():global_costmap_(NULL), local_costmap_(NULL), 
+  MoveSlowAndClear::MoveSlowAndClear():global_costmap_(NULL), local_costmap_(NULL),
                                        initialized_(false), remove_limit_thread_(NULL), limit_set_(false){}
 
   MoveSlowAndClear::~MoveSlowAndClear()
@@ -105,6 +105,7 @@ namespace move_slow_and_clear
     }
 
     //clear the desired space in the costmaps
+    //1. 获得global or local layeredCostmap pointer
     std::vector<boost::shared_ptr<costmap_2d::Layer> >* plugins = global_costmap_->getLayeredCostmap()->getPlugins();
     for (std::vector<boost::shared_ptr<costmap_2d::Layer> >::iterator pluginp = plugins->begin(); pluginp != plugins->end(); ++pluginp) {
             boost::shared_ptr<costmap_2d::Layer> plugin = *pluginp;
@@ -114,7 +115,7 @@ namespace move_slow_and_clear
             costmap->setConvexPolygonCost(global_poly, costmap_2d::FREE_SPACE);
           }
     }
-     
+    //2. 遍历layeredCostmap, 获得障碍物层的指针；
     plugins = local_costmap_->getLayeredCostmap()->getPlugins();
     for (std::vector<boost::shared_ptr<costmap_2d::Layer> >::iterator pluginp = plugins->begin(); pluginp != plugins->end(); ++pluginp) {
             boost::shared_ptr<costmap_2d::Layer> plugin = *pluginp;
@@ -123,7 +124,7 @@ namespace move_slow_and_clear
             costmap = boost::static_pointer_cast<costmap_2d::ObstacleLayer>(plugin);
             costmap->setConvexPolygonCost(local_poly, costmap_2d::FREE_SPACE);
           }
-    } 
+    }
 
     //lock... just in case we're already speed limited
     boost::mutex::scoped_lock l(mutex_);

@@ -36,7 +36,7 @@
 
 namespace costmap_2d
 {
-
+//footprint polygon 参数解析
 /** @brief Parse a vector of vector of floats from a string.
  * @param input
  * @param error_return

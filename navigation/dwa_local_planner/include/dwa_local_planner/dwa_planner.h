@@ -71,7 +71,7 @@ namespace dwa_local_planner {
     public:
       /**
        * @brief  Constructor for the planner
-       * @param name The name of the planner 
+       * @param name The name of the planner
        * @param costmap_ros A pointer to the costmap instance the planner should use
        * @param global_frame the frame id of the tf frame to use
        */
@@ -96,8 +96,8 @@ namespace dwa_local_planner {
 
       /**
        * @brief Given the current position and velocity of the robot, find the best trajectory to exectue
-       * @param global_pose The current position of the robot 
-       * @param global_vel The current velocity of the robot 
+       * @param global_pose The current position of the robot
+       * @param global_vel The current velocity of the robot
        * @param drive_velocities The velocities to send to the robot base
        * @return The highest scoring trajectory. A cost >= 0 means the trajectory is legal to execute.
        */
@@ -115,7 +115,7 @@ namespace dwa_local_planner {
        * The obstacle cost function gets the footprint.
        * The path and goal cost functions get the global_plan
        * The alignment cost functions get a version of the global plan
-       *   that is modified based on the global_pose 
+       *   that is modified based on the global_pose
        */
       void updatePlanAndLocalCosts(const geometry_msgs::PoseStamped& global_pose,
           const std::vector<geometry_msgs::PoseStamped>& new_plan,
@@ -140,7 +140,7 @@ namespace dwa_local_planner {
       bool getCellCosts(int cx, int cy, float &path_cost, float &goal_cost, float &occ_cost, float &total_cost);
 
       /**
-       * sets new plan and resets state
+       * sets new plan and resets state；    global_plan 提供
        */
       bool setPlan(const std::vector<geometry_msgs::PoseStamped>& orig_global_plan);
 
@@ -148,9 +148,9 @@ namespace dwa_local_planner {
 
       base_local_planner::LocalPlannerUtil *planner_util_;
 
-      double stop_time_buffer_; ///< @brief How long before hitting something we're going to enforce that the robot stop
+      double stop_time_buffer_;   ///< @brief How long before hitting something we're going to enforce that the robot stop
       double pdist_scale_, gdist_scale_, occdist_scale_;
-      Eigen::Vector3f vsamples_;
+      Eigen::Vector3f vsamples_;  //保存3维的采样数
 
       double sim_period_;///< @brief The number of seconds to use to compute max/min vels for dwa
       base_local_planner::Trajectory result_traj_;

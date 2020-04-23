@@ -450,6 +450,7 @@ unsigned int Costmap2D::getSizeInCellsY() const
 double Costmap2D::getSizeInMetersX() const
 {
   return (size_x_ - 1 + 0.5) * resolution_;
+  //0.5  半个网格的宽度，map ->  world 默认向左下(origin)迁移，位置对齐？
 }
 
 double Costmap2D::getSizeInMetersY() const
