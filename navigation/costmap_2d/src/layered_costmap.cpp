@@ -46,17 +46,18 @@ using std::vector;
 
 namespace costmap_2d
 {
+//把各层叠加一起，形成global/local costmap
 
 LayeredCostmap::LayeredCostmap(std::string global_frame, bool rolling_window, bool track_unknown) :
     costmap_(),
     global_frame_(global_frame),
     rolling_window_(rolling_window),
     current_(false),
-    minx_(0.0),
+    minx_(0.0), //double, world coor bound
     miny_(0.0),
     maxx_(0.0),
     maxy_(0.0),
-    bx0_(0),
+    bx0_(0),    //uint,   map cell coor bound
     bxn_(0),
     by0_(0),
     byn_(0),
@@ -66,9 +67,9 @@ LayeredCostmap::LayeredCostmap(std::string global_frame, bool rolling_window, bo
     inscribed_radius_(0.1)
 {
   if (track_unknown)
-    costmap_.setDefaultValue(255);
+    costmap_.setDefaultValue(255); //bingo
   else
-    costmap_.setDefaultValue(0);
+    costmap_.setDefaultValue(0);   //
 }
 
 LayeredCostmap::~LayeredCostmap()
@@ -167,7 +168,7 @@ void LayeredCostmap::updateMap(double robot_x, double robot_y, double robot_yaw)
   for (vector<boost::shared_ptr<Layer> >::iterator plugin = plugins_.begin(); plugin != plugins_.end();
        ++plugin)
   {
-    (*plugin)->updateCosts(costmap_, x0, y0, xn, yn);
+    (*plugin)->updateCosts(costmap_, x0, y0, xn, yn);//将本层的数据更新到costmap_(costmap_ 它就是master_grid)
   }
 
   bx0_ = x0;

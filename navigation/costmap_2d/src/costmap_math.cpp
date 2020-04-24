@@ -65,7 +65,9 @@ double distanceToLine(double pX, double pY, double x0, double y0, double x1, dou
   return distance(pX, pY, xx, yy);
 }
 
-//判断test点是否在多边形区域内，通过判断点是否在直线一侧
+//判断test点是否在多边形区域内
+//PIP（Point in Polygon）
+//射线法
 bool intersects(std::vector<geometry_msgs::Point>& polygon, float testx, float testy)
 {
   bool c = false;

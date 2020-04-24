@@ -28,7 +28,7 @@
  */
 
 #include<costmap_2d/costmap_math.h>
-#include <boost/tokenizer.hpp>
+#include <boost/tokenizer.hpp>    //token 分词？ 利用标点符号等
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <costmap_2d/footprint.h>
@@ -117,6 +117,7 @@ void transformFootprint(double x, double y, double theta, const std::vector<geom
     new_pt.x = x + (footprint_spec[i].x * cos_th - footprint_spec[i].y * sin_th);
     new_pt.y = y + (footprint_spec[i].x * sin_th + footprint_spec[i].y * cos_th);
     oriented_footprint.push_back(new_pt);
+    //from odom to footprint point;    footpoint in odom frame;
   }
 }
 
@@ -135,10 +136,20 @@ void transformFootprint(double x, double y, double theta, const std::vector<geom
     oriented_footprint.polygon.points.push_back(new_pt);
   }
 }
-/****************************************
- * 在原来x,y的基础上偏移了一个padding的距离,
- * 相当于将footprint放大
- ***************************************/
+/* costmap_2d   dynamic_parameter: footprint_padding, 默认0.01
+ * 在原来x,y的基础上偏移了一个footprint_padding的距离,
+ * 相当于将footprint放大这个系数
+ */
+
+/*local_planner 相关
+    ~<name>/scaling_speed (double, default: 0.25)
+        The absolute value of the velocity at which to start scaling the robot's footprint, in m/s
+    ~<name>/max_scaling_factor (double, default: 0.2)
+        The maximum factor to scale the robot's footprint by
+*/
+
+/*
+*/
 void padFootprint(std::vector<geometry_msgs::Point>& footprint, double padding)
 {
   // pad footprint in place
@@ -146,7 +157,7 @@ void padFootprint(std::vector<geometry_msgs::Point>& footprint, double padding)
   {
     geometry_msgs::Point& pt = footprint[ i ];
     pt.x += sign0(pt.x) * padding;
-    pt.y += sign0(pt.y) * padding;
+    pt.y += sign0(pt.y) * padding;   //footprint_padding 动态参数
   }
 }
 
@@ -219,6 +230,8 @@ std::vector<geometry_msgs::Point> makeFootprintFromParams(ros::NodeHandle& nh)
   std::string full_radius_param_name;
   std::vector<geometry_msgs::Point> points;
 
+
+  //footprint or radius 一般定义在costmap_common_param.yaml, 全局地图局部地图都需要
   if (nh.searchParam("footprint", full_param_name))
   {
     XmlRpc::XmlRpcValue footprint_xmlrpc;

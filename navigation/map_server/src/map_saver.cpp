@@ -61,6 +61,14 @@ class MapGenerator
 
 
       std::string mapdatafile = mapname_ + ".pgm";
+      //pgm portable graymap file format
+      //PGM格式图像格式分为两类:P2和P5类型
+      //开头打开分别是
+      /*
+      P5 □ width □ height □ 灰度最大值
+      */
+
+
       ROS_INFO("Writing map occupancy data to %s", mapdatafile.c_str());
       FILE* out = fopen(mapdatafile.c_str(), "w");
       if (!out)

@@ -416,14 +416,14 @@ private:
     return x > 0 ? 1.0 : -1.0;
   }
 
-  mutex_t* access_;
+  mutex_t* access_;      //typedef 递归锁
 protected:
-  unsigned int size_x_;
+  unsigned int size_x_;  //index
   unsigned int size_y_;
   double resolution_;
-  double origin_x_;
+  double origin_x_;      //world/map  coordinate
   double origin_y_;
-  unsigned char* costmap_;
+  unsigned char* costmap_;   //指针指向二维数组，存的就是cost
   unsigned char default_value_;
 
   class MarkCell

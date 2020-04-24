@@ -96,8 +96,8 @@ void Costmap2D::resetMaps()
 void Costmap2D::resetMap(unsigned int x0, unsigned int y0, unsigned int xn, unsigned int yn)
 {
   boost::unique_lock<mutex_t> lock(*(access_));
-  unsigned int len = xn - x0;
-  for (unsigned int y = y0 * size_x_ + x0; y < yn * size_x_ + x0; y += size_x_)
+  unsigned int len = xn - x0;  //多少行
+  for (unsigned int y = y0 * size_x_ + x0; y < yn * size_x_ + x0; y += size_x_)//指针偏移量
     memset(costmap_ + y, default_value_, len * sizeof(unsigned char));
 }
 
@@ -194,7 +194,7 @@ unsigned char* Costmap2D::getCharMap() const
 
 unsigned char Costmap2D::getCost(unsigned int mx, unsigned int my) const
 {
-  return costmap_[getIndex(mx, my)];
+  return costmap_[getIndex(mx, my)]; //getIndex  inline func in header
 }
 
 void Costmap2D::setCost(unsigned int mx, unsigned int my, unsigned char cost)
@@ -204,8 +204,8 @@ void Costmap2D::setCost(unsigned int mx, unsigned int my, unsigned char cost)
 
 void Costmap2D::mapToWorld(unsigned int mx, unsigned int my, double& wx, double& wy) const
 {
-  wx = origin_x_ + (mx + 0.5) * resolution_;
-  wy = origin_y_ + (my + 0.5) * resolution_;
+  wx = origin_x_ + (mx + 0.5) * resolution_;  //0.5 代表网格中心位置
+  wy = origin_y_ + (my + 0.5) * resolution_;  //origin代表坐下网格的左下角点位置
 }
 
 bool Costmap2D::worldToMap(double wx, double wy, unsigned int& mx, unsigned int& my) const
@@ -227,6 +227,7 @@ void Costmap2D::worldToMapNoBounds(double wx, double wy, int& mx, int& my) const
 {
   mx = (int)((wx - origin_x_) / resolution_);
   my = (int)((wy - origin_y_) / resolution_);
+  //没有边界检查，不判断是否在现有地图表示内
 }
 
 void Costmap2D::worldToMapEnforceBounds(double wx, double wy, int& mx, int& my) const
@@ -234,6 +235,7 @@ void Costmap2D::worldToMapEnforceBounds(double wx, double wy, int& mx, int& my) 
   // Here we avoid doing any math to wx,wy before comparing them to
   // the bounds, so their values can go out to the max and min values
   // of double floating point.
+  // 确保map pos 在地图内，如果不在进行纠错
   if (wx < origin_x_)
   {
     mx = 0;
@@ -261,6 +263,8 @@ void Costmap2D::worldToMapEnforceBounds(double wx, double wy, int& mx, int& my) 
   }
 }
 
+
+//????
 void Costmap2D::updateOrigin(double new_origin_x, double new_origin_y)
 {
   // project the new origin into the grid
@@ -338,6 +342,7 @@ bool Costmap2D::setConvexPolygonCost(const std::vector<geometry_msgs::Point>& po
   }
 
   std::vector<MapLocation> polygon_cells;
+  std::vector<MapLocation> map_polygon;
 
   // get the cells that fill the polygon
   convexFillCells(map_polygon, polygon_cells);
@@ -482,6 +487,7 @@ bool Costmap2D::saveMap(std::string file_name)
     return false;
   }
 
+  //默认pgm格式
   fprintf(fp, "P2\n%u\n%u\n%u\n", size_x_, size_y_, 0xff);
   for (unsigned int iy = 0; iy < size_y_; iy++)
   {

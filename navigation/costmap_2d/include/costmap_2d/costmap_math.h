@@ -57,7 +57,7 @@ inline double sign0(double x)
 
 inline double distance(double x0, double y0, double x1, double y1)
 {
-  return hypot(x1 - x0, y1 - y0);
+  return hypot(x1 - x0, y1 - y0); //math.h
 }
 /**
  * @brief distanceToLine    点p到直线01的距离

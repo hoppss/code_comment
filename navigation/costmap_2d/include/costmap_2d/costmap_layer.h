@@ -43,7 +43,7 @@
 
 namespace costmap_2d
 {
-
+//每一个plugin层的基类
 class CostmapLayer : public Layer, public Costmap2D
 {
 public:
@@ -74,7 +74,7 @@ protected:
    * Updates the master_grid within the specified
    * bounding box using this layer's values.
    *
-   * TrueOverwrite means every value from this layer
+   * TrueOverwrite means every value from this layer(包含NO_INFORMATION)
    * is written into the master grid.
    */
   void updateWithTrueOverwrite(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j);
@@ -83,7 +83,7 @@ protected:
    * Updates the master_grid within the specified
    * bounding box using this layer's values.
    *
-   * Overwrite means every valid value from this layer
+   * Overwrite means every valid value from this layer？ 差别this layer valid or invalid -> NO_INFOMATION
    * is written into the master grid (does not copy NO_INFORMATION)
    */
   void updateWithOverwrite(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j);
@@ -108,8 +108,8 @@ protected:
    * it is overwritten with the layer's value. If the layer's value
    * is NO_INFORMATION, then the master value does not change.
    *
-   * If the sum value is larger than INSCRIBED_INFLATED_OBSTACLE,
-   * the master value is set to (INSCRIBED_INFLATED_OBSTACLE - 1).
+   * If the sum value is larger than INSCRIBED_INFLATED_OBSTACLE, //(253 ??)
+   * the master value is set to (INSCRIBED_INFLATED_OBSTACLE - 1).//(253 -1)
    */
   void updateWithAddition(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j);
 

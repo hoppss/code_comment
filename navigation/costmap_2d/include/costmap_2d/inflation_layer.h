@@ -69,7 +69,7 @@ public:
   }
   unsigned int index_;
   unsigned int x_, y_;
-  unsigned int src_x_, src_y_;
+  unsigned int src_x_, src_y_; //最近实际障碍物点
 };
 
 class InflationLayer : public Layer
@@ -184,7 +184,7 @@ private:
   int seen_size_;
 
   unsigned char** cached_costs_;
-  double** cached_distances_;
+  double** cached_distances_; //二维数组
   double last_min_x_, last_min_y_, last_max_x_, last_max_y_;
 
   dynamic_reconfigure::Server<costmap_2d::InflationPluginConfig> *dsrv_;

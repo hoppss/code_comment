@@ -44,6 +44,7 @@
 #include <vector>
 #include <string>
 
+//把各层叠加一起，形成global/local costmap
 namespace costmap_2d
 {
 class Layer;
@@ -69,6 +70,8 @@ public:
    * @brief  Update the underlying costmap with new data.
    * If you want to update the map outside of the update loop that runs, you can call this.
    */
+
+  // loop 在哪儿？ costmap2d_ros ?
   void updateMap(double robot_x, double robot_y, double robot_yaw);
 
   std::string getGlobalFrameID() const
@@ -98,7 +101,8 @@ public:
   {
     return rolling_window_;
   }
-
+  //tracking_unknow  默认为no_info 255
+  //un_track_unknow  默认为Free_space 0
   bool isTrackingUnknown()
   {
     return costmap_.getDefaultValue() == costmap_2d::NO_INFORMATION;
@@ -152,7 +156,7 @@ public:
    * footprint.
    *
    * This is updated by setFootprint(). */
-  double getInscribedRadius() { return inscribed_radius_; }
+  double getInscribedRadius() { return inscribed_radius_; } //四边形怎么算？
 
 private:
   Costmap2D costmap_;
@@ -161,8 +165,8 @@ private:
   bool rolling_window_;  /// < @brief Whether or not the costmap should roll with the robot
 
   bool current_;
-  double minx_, miny_, maxx_, maxy_;
-  unsigned int bx0_, bxn_, by0_, byn_;
+  double minx_, miny_, maxx_, maxy_;   //bound in world meters?
+  unsigned int bx0_, bxn_, by0_, byn_; //bound in map cells?
 
   std::vector<boost::shared_ptr<Layer> > plugins_;
 

@@ -2,7 +2,8 @@
 
 namespace costmap_2d
 {
-
+//min/max  bounding box 边界；
+//为了bounding box包围 （x,y）
 void CostmapLayer::touch(double x, double y, double* min_x, double* min_y, double* max_x, double* max_y)
 {
     *min_x = std::min(x, *min_x);
@@ -11,6 +12,7 @@ void CostmapLayer::touch(double x, double y, double* min_x, double* min_y, doubl
     *max_y = std::max(y, *max_y);
 }
 
+//reset layer 的Costmap2D object
 void CostmapLayer::matchSize()
 {
     Costmap2D* master = layered_costmap_->getCostmap();
@@ -20,7 +22,7 @@ void CostmapLayer::matchSize()
 
 void CostmapLayer::addExtraBounds(double mx0, double my0, double mx1, double my1)
 {
-    extra_min_x_ = std::min(mx0, extra_min_x_);
+    extra_min_x_ = std::min(mx0, extra_min_x_); //全局，而不是局部？
     extra_max_x_ = std::max(mx1, extra_max_x_);
     extra_min_y_ = std::min(my0, extra_min_y_);
     extra_max_y_ = std::max(my1, extra_max_y_);
@@ -29,6 +31,7 @@ void CostmapLayer::addExtraBounds(double mx0, double my0, double mx1, double my1
 /****************************************
  * 当使用addExtraBounds更新地图之后,这个函数才会有用
  ***************************************/
+//全局的bound 更新
 void CostmapLayer::useExtraBounds(double* min_x, double* min_y, double* max_x, double* max_y)
 {
     if (!has_extra_bounds_)
@@ -48,6 +51,7 @@ void CostmapLayer::useExtraBounds(double* min_x, double* min_y, double* max_x, d
  * 更新指定区域内的cost值,
  * 只有本层的cost值大于主costmap值才会被更新
  ***************************************/
+//利用本层数据，更新master_grid
 void CostmapLayer::updateWithMax(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i, int max_j)
 {
   if (!enabled_)
@@ -58,7 +62,7 @@ void CostmapLayer::updateWithMax(costmap_2d::Costmap2D& master_grid, int min_i, 
 
   for (int j = min_j; j < max_j; j++)
   {
-    unsigned int it = j * span + min_i;
+    unsigned int it = j * span + min_i; //获得首地址指针
     for (int i = min_i; i < max_i; i++)
     {
       if (costmap_[it] == NO_INFORMATION){
@@ -68,7 +72,7 @@ void CostmapLayer::updateWithMax(costmap_2d::Costmap2D& master_grid, int min_i, 
 
       unsigned char old_cost = master_array[it];
       if (old_cost == NO_INFORMATION || old_cost < costmap_[it])
-        master_array[it] = costmap_[it];
+        master_array[it] = costmap_[it]; //本层的数据大，或者mastergrid 为NO_INFO，那么更新
       it++;
     }
   }
@@ -77,6 +81,7 @@ void CostmapLayer::updateWithMax(costmap_2d::Costmap2D& master_grid, int min_i, 
 /****************************************
  * 将需要更新区域中的cost值覆盖主costmap上
  ***************************************/
+//把本层的NO_INFO, 也更新到master grid
 void CostmapLayer::updateWithTrueOverwrite(costmap_2d::Costmap2D& master_grid, int min_i, int min_j,
                                            int max_i, int max_j)
 {
@@ -139,7 +144,7 @@ void CostmapLayer::updateWithAddition(costmap_2d::Costmap2D& master_grid, int mi
       {
         int sum = old_cost + costmap_[it];
         if (sum >= costmap_2d::INSCRIBED_INFLATED_OBSTACLE)
-            master_array[it] = costmap_2d::INSCRIBED_INFLATED_OBSTACLE - 1;
+            master_array[it] = costmap_2d::INSCRIBED_INFLATED_OBSTACLE - 1; //253 -1
         else
             master_array[it] = sum;
       }

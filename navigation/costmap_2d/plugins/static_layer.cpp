@@ -74,18 +74,18 @@ void StaticLayer::onInitialize()
 
   std::string map_topic;
   nh.param("map_topic", map_topic, std::string("map"));
-  nh.param("first_map_only", first_map_only_, false);
-  nh.param("subscribe_to_updates", subscribe_to_updates_, false);
+  nh.param("first_map_only", first_map_only_, false);//global/local costmap param files
+  nh.param("subscribe_to_updates", subscribe_to_updates_, false);//topic /map_updates 谁发？？
 
   nh.param("track_unknown_space", track_unknown_space_, true);
-  nh.param("use_maximum", use_maximum_, false);
+  nh.param("use_maximum", use_maximum_, false);      //最大值255， 其实更新costmap 对于NO_INFORMATION的态度
 
   int temp_lethal_threshold, temp_unknown_cost_value;
-  nh.param("lethal_cost_threshold", temp_lethal_threshold, int(100));
-  nh.param("unknown_cost_value", temp_unknown_cost_value, int(-1));
+  nh.param("lethal_cost_threshold", temp_lethal_threshold, int(100));// 100-255
+  nh.param("unknown_cost_value", temp_unknown_cost_value, int(-1));  //-1
   nh.param("trinary_costmap", trinary_costmap_, true);
 
-  lethal_threshold_ = std::max(std::min(temp_lethal_threshold, 100), 0);
+  lethal_threshold_ = std::max(std::min(temp_lethal_threshold, 100), 0);//100 是处理/map
   unknown_cost_value_ = temp_unknown_cost_value;
   /****************************************
    * 订阅map话题,绑定回调函数incomingMap
@@ -107,8 +107,8 @@ void StaticLayer::onInitialize()
       ros::spinOnce();
       r.sleep();
     }
-
-    ROS_INFO("Received a %d X %d map at %f m/pix", getSizeInCellsX(), getSizeInCellsY(), getResolution());
+    //getSizeInCellsX, 继承自Costmap2D
+        ROS_INFO("Received a %d X %d map at %f m/pix", getSizeInCellsX(), getSizeInCellsY(), getResolution());
     /****************************************
      * 订阅map_update话题,绑定回调函数incomingUpdate
      ***************************************/

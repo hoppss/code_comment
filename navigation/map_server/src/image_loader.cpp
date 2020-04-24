@@ -48,6 +48,7 @@
 #include "map_server/image_loader.h"
 
 // compute linear index for given map coords
+// 索引， 行为x-axis
 #define MAP_IDX(sx, i, j) ((sx) * (j) + (i))
 
 namespace map_server
@@ -85,7 +86,7 @@ loadMapFromFile(nav_msgs::GetMap::Response* resp,
   resp->map.info.height = img->h;
   resp->map.info.resolution = res;
   resp->map.info.origin.position.x = *(origin);
-  resp->map.info.origin.position.y = *(origin+1);
+  resp->map.info.origin.position.y = *(origin+1); //+1  因为origin 是数组地址指针
   resp->map.info.origin.position.z = 0.0;
   btQuaternion q;
   // setEulerZYX(yaw, pitch, roll)
@@ -93,7 +94,7 @@ loadMapFromFile(nav_msgs::GetMap::Response* resp,
   resp->map.info.origin.orientation.x = q.x();
   resp->map.info.origin.orientation.y = q.y();
   resp->map.info.origin.orientation.z = q.z();
-  resp->map.info.origin.orientation.w = q.w();
+  resp->map.info.origin.orientation.w = q.w();    // 优先使用tf2
 
   // Allocate space to hold the data
   resp->map.data.resize(resp->map.info.width * resp->map.info.height);
@@ -148,7 +149,7 @@ loadMapFromFile(nav_msgs::GetMap::Response* resp,
         value = +100;
       else if(occ < free_th)
         value = 0;
-      else if(mode==TRINARY || alpha < 1.0)
+      else if (mode == TRINARY || alpha < 1.0)  //现在默认都是TRINARY
         value = -1;
       else {
         double ratio = (occ - free_th) / (occ_th - free_th);
