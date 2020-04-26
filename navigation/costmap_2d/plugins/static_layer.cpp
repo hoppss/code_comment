@@ -375,4 +375,76 @@ void StaticLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int
   }
 }
 
+#if 0
+void StaticLayer::incomingWall(const g_msgs::VirtualWallConstPtr& wall) {
+  ROS_INFO("StaticLayer incomingWall size: %ld", wall->start.size());
+  ROS_INFO("StaticLayer incomingWall, start[0]: %f, end[0]: %f", wall->start[0].x, wall->start[0].y);
+
+  // if(!map_received_) {
+  //     walls_ = *wall;
+  //     wall_stored_ = true;
+  // }
+  // else {
+  //     setWallsCost(FREE_SPACE);
+  //     walls_ = *wall;
+  //     setWallsCost(LETHAL_OBSTACLE);
+  //     has_updated_data_ = true;
+  // }
+  //my code
+  //pixel coordinate -> map coordinate
+
+  if (!map_received_) {
+    walls_ = *wall;
+    wall_stored_ = true;
+  } else {
+    walls_ = *wall;
+    newVirtualWallSetup(&walls_);
+    has_updated_data_ = true;
+  }
+}
+
+void StaticLayer::newVirtualWallSetup(g_msgs::VirtualWall* wall) {
+  Costmap2D* master = layered_costmap_->getCostmap();
+  ROS_INFO("NEWVIRTUALWALL SETUP, master layer current size: (%d x %d)，(%d x %d)", (uint32_t)master->getSizeInCellsX(), (uint32_t)master->getSizeInCellsY(), width_, height_);
+  std::vector<std::vector<costmap_2d::MapLocation>> collector;
+  std::vector<costmap_2d::MapLocation> temp_pair;
+  for (int i = 0; i < wall->start.size(); ++i) {
+    temp_pair.clear();
+    costmap_2d::MapLocation temp_s, temp_e;
+    std::cerr << "i= " << i << std::endl;
+    std::cerr << "start " << wall->start[i].x << " " << wall->start[i].y << std::endl;
+    std::cerr << "end   " << wall->end[i].x << " " << wall->end[i].y << std::endl
+              << std::endl;
+    temp_s.x = static_cast<int>(wall->start[i].x);
+    temp_s.y = std::abs(master->getSizeInCellsY() - wall->start[i].y);
+    temp_pair.push_back(temp_s);
+
+    temp_e.x = static_cast<int>(wall->end[i].x);
+    temp_e.y = std::abs(master->getSizeInCellsY() - wall->end[i].y);
+    temp_pair.push_back(temp_e);
+    collector.push_back(temp_pair);
+  }
+  //get virtual wall outline cells
+  std::vector<costmap_2d::MapLocation> polygon_cells;
+  PolygonOutlineCells cell_gatherer(*master, master->getCharMap(), polygon_cells);
+  std::cerr << "start " << collector[0][0].x << " " << collector[0][0].y << std::endl;
+  std::cerr << "end   " << collector[0][1].x << " " << collector[0][1].y << std::endl;
+
+  for (unsigned int i = 0; i < collector.size(); ++i) {
+    if (collector[i].size() == 2) {
+      ROS_ERROR("__________,%d,%d,%d,%d", collector[i][0].x, collector[i][0].y, collector[i][1].x, collector[i][1].y);
+      raytraceLine(cell_gatherer, collector[i][0].x, collector[i][0].y, collector[i][1].x, collector[i][1].y);
+      ROS_ERROR("__________,%d,%d -> %d,%d, outline size: %d", collector[i][0].x, collector[i][0].y, collector[i][1].x, collector[i][1].y,polygon_cells.size());
+    } else {
+      ROS_ERROR("what is fuck");
+    }
+  }
+  ROS_INFO("_____wall size: %ld, cell size:%ld ___", wall->start.size(), polygon_cells.size());
+  for (int i = 0; i < polygon_cells.size(); ++i) {
+    costmap_[polygon_cells[i].x + master->getSizeInCellsX() * polygon_cells[i].y] = LETHAL_OBSTACLE;
+  }
+  ROS_ERROR("FINISHI");
+}
+#endif
+
 }  // namespace costmap_2d

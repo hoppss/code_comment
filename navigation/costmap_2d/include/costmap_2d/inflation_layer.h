@@ -115,7 +115,7 @@ public:
     }
     return cost;
   }
-
+  //
   /**
    * @brief Change the values of the inflation radius parameters
    * @param inflation_radius The new inflation radius
@@ -162,7 +162,7 @@ private:
     unsigned int dx = abs(mx - src_x);
     unsigned int dy = abs(my - src_y);
     return cached_costs_[dx][dy];
-  }
+  }//只维护1/4区域？
 
   void computeCaches();
   void deleteKernels();
@@ -181,9 +181,9 @@ private:
   std::map<double, std::vector<CellData> > inflation_cells_;
 
   bool* seen_;
-  int seen_size_;
+  int seen_size_; //整张图的尺寸，
 
-  unsigned char** cached_costs_;
+  unsigned char** cached_costs_;  //两张正方形表（1/4?）cached_costs_，cached_distances_
   double** cached_distances_; //二维数组
   double last_min_x_, last_min_y_, last_max_x_, last_max_y_;
 

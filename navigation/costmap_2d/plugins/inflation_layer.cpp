@@ -210,7 +210,7 @@ void InflationLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, 
   max_j += cell_inflation_radius_;
 
   min_i = std::max(0, min_i);
-  min_j = std::max(0, min_j);
+  min_j = std::max(0, min_j); //左下角为（0,0）
   max_i = std::min(int(size_x), max_i);
   max_j = std::min(int(size_y), max_j);
 
@@ -307,14 +307,14 @@ inline void InflationLayer::enqueue(unsigned int index, unsigned int mx, unsigne
   if (!seen_[index])
   {
     // we compute our distance table one cell further than the inflation radius dictates so we can make the check below
-    double distance = distanceLookup(mx, my, src_x, src_y);
+    double distance = distanceLookup(mx, my, src_x, src_y);//cell 欧式距离
 
     // we only want to put the cell in the list if it is within the inflation radius of the obstacle point
     if (distance > cell_inflation_radius_)
       return;
 
     // push the cell data onto the inflation list and mark
-    inflation_cells_[distance].push_back(CellData(index, mx, my, src_x, src_y));
+    inflation_cells_[distance].push_back(CellData(index, mx, my, src_x, src_y)); //同一个距离的放一起
   }
 }
 
@@ -329,7 +329,7 @@ void InflationLayer::computeCaches()
     deleteKernels();
 
     cached_costs_ = new unsigned char*[cell_inflation_radius_ + 2];
-    cached_distances_ = new double*[cell_inflation_radius_ + 2];
+    cached_distances_ = new double*[cell_inflation_radius_ + 2]; //为什么要+2
 
     for (unsigned int i = 0; i <= cell_inflation_radius_ + 1; ++i)
     {
@@ -388,8 +388,8 @@ void InflationLayer::setInflationParameters(double inflation_radius, double cost
     boost::unique_lock < boost::recursive_mutex > lock(*inflation_access_);
 
     inflation_radius_ = inflation_radius;
-    cell_inflation_radius_ = cellDistance(inflation_radius_);
-    weight_ = cost_scaling_factor;
+    cell_inflation_radius_ = cellDistance(inflation_radius_); // 除以分辨率变成cells 单位
+    weight_ = cost_scaling_factor; //e 指数函数
     need_reinflation_ = true;
     computeCaches();
   }
