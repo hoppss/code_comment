@@ -44,7 +44,7 @@ class LocalPlannerLimits
 {
 public:
 
-  double max_vel_trans;
+  double max_vel_trans; //trans means vel x&y
   double min_vel_trans;
   double max_vel_x;
   double min_vel_x;

@@ -90,7 +90,7 @@ public:
       numpixels_ = deltay_;         // There are more y-values than x-values
     }
   }
-    
+
   bool isValid() const
   {
     return curpixel_ <= numpixels_;
@@ -99,7 +99,7 @@ public:
   void advance()
   {
     num_ += numadd_;              // Increase the numerator by the top of the fraction
-    if( num_ >= den_ )            // Check if numerator >= denominator
+    if( num_ >= den_ )            // Check if numerator >= denominator 分子大于
     {
       num_ -= den_;               // Calculate the new numerator value
       x_ += xinc1_;               // Change the x as appropriate
@@ -110,7 +110,7 @@ public:
 
     curpixel_++;
   }
-  
+
   int getX() const { return x_; }
   int getY() const { return y_; }
 

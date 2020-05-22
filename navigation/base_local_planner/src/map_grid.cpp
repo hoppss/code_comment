@@ -42,7 +42,7 @@ namespace base_local_planner{
   {
   }
 
-  MapGrid::MapGrid(unsigned int size_x, unsigned int size_y) 
+  MapGrid::MapGrid(unsigned int size_x, unsigned int size_y)
     : size_x_(size_x), size_y_(size_y)
   {
     commonInit();
@@ -93,7 +93,7 @@ namespace base_local_planner{
         for(unsigned int j = 0; j < size_x_; ++j){
           int index = size_x_ * i + j;
           map_[index].cx = j;
-          map_[index].cy = i;
+          map_[index].cy = i;// 重置index
         }
       }
     }
@@ -110,7 +110,7 @@ namespace base_local_planner{
         (cost == costmap_2d::LETHAL_OBSTACLE ||
          cost == costmap_2d::INSCRIBED_INFLATED_OBSTACLE ||
          cost == costmap_2d::NO_INFORMATION)){
-      check_cell->target_dist = obstacleCosts();
+      check_cell->target_dist = obstacleCosts(); //map_.size()
       return false;
     }
 
@@ -125,7 +125,7 @@ namespace base_local_planner{
   //reset the path_dist and goal_dist fields for all cells
   void MapGrid::resetPathDist(){
     for(unsigned int i = 0; i < map_.size(); ++i) {
-      map_[i].target_dist = unreachableCellCosts();
+      map_[i].target_dist = unreachableCellCosts(); //size + 1
       map_[i].target_mark = false;
       map_[i].within_robot = false;
     }

@@ -416,7 +416,7 @@ void Costmap2DROS::setUnpaddedRobotFootprint(const std::vector<geometry_msgs::Po
   layered_costmap_->setFootprint(padded_footprint_);
 }
 
-void Costmap2DROS::movementCB(const ros::TimerEvent &event)
+void Costmap2DROS::movementCB(const ros::TimerEvent &event) //0.1s 是不是有点快周期
 {
   // don't allow configuration to happen while this check occurs
   // boost::recursive_mutex::scoped_lock mcl(configuration_mutex_);
@@ -434,7 +434,8 @@ void Costmap2DROS::movementCB(const ros::TimerEvent &event)
 
     //此处可能存在问题应该在比较完成之后在进行赋值
     //old_pose_ = new_pose;
-
+    //tf2::Vector3.distance(const tf2::Vector end); 返回两点距离
+    //tf2::Quaternion.angle(const tf2::Quaternion end); 返回两个夹角的一半
     robot_stopped_ = (tf2::Vector3(old_pose_.pose.position.x, old_pose_.pose.position.y,
                                    old_pose_.pose.position.z).distance(tf2::Vector3(new_pose.pose.position.x,
                                        new_pose.pose.position.y, new_pose.pose.position.z)) < 1e-3) &&
@@ -469,7 +470,7 @@ void Costmap2DROS::mapUpdateLoop(double frequency)
     updateMap();
 
     gettimeofday(&end, NULL);
-    start_t = start.tv_sec + double(start.tv_usec) / 1e6;
+    start_t = start.tv_sec + double(start.tv_usec) / 1e6;   //微秒 转化为 秒
     end_t = end.tv_sec + double(end.tv_usec) / 1e6;
     t_diff = end_t - start_t;
     ROS_DEBUG("Map update time: %.9f", t_diff);
@@ -510,7 +511,7 @@ void Costmap2DROS::updateMap()
              y = pose.pose.position.y,
              yaw = tf2::getYaw(pose.pose.orientation);
 
-      layered_costmap_->updateMap(x, y, yaw);
+      layered_costmap_->updateMap(x, y, yaw);//更新机器人的边界？
 
       geometry_msgs::PolygonStamped footprint;
       footprint.header.frame_id = global_frame_;

@@ -108,7 +108,7 @@ void LayeredCostmap::updateMap(double robot_x, double robot_y, double robot_yaw)
   {
     double new_origin_x = robot_x - costmap_.getSizeInMetersX() / 2;
     double new_origin_y = robot_y - costmap_.getSizeInMetersY() / 2;
-    costmap_.updateOrigin(new_origin_x, new_origin_y);
+    costmap_.updateOrigin(new_origin_x, new_origin_y);//更新地图的起点，bound信息没变
   }
 
   if (plugins_.size() == 0)
@@ -134,7 +134,7 @@ void LayeredCostmap::updateMap(double robot_x, double robot_y, double robot_yaw)
                         prev_minx, prev_miny, prev_maxx , prev_maxy,
                         minx_, miny_, maxx_ , maxy_,
                         (*plugin)->getName().c_str());
-    }
+    }//bound 改变时，只能小的更小，大的更大
   }
 
   int x0, xn, y0, yn;

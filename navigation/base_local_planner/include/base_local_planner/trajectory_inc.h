@@ -36,7 +36,7 @@
 
 #include <limits>
 
-#ifndef DBL_MAX   /* Max decimal value of a double */
+#ifndef DBL_MAX   /* Max decimal 十进制 value of a double */
 #define DBL_MAX   std::numeric_limits<double>::max()  // 1.7976931348623157e+308
 #endif
 
