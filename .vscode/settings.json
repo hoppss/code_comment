@@ -8,5 +8,6 @@
     "unordered_map": "cpp",
     "cmath": "cpp",
     "complex": "cpp"
-  }
+  },
+  "cmake.configureOnOpen": true
 }
