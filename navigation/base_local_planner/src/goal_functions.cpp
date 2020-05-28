@@ -68,8 +68,8 @@ namespace base_local_planner {
 
     pub.publish(gui_path);
   }
-
-  void prunePlan(const geometry_msgs::PoseStamped& global_pose, std::vector<geometry_msgs::PoseStamped>& plan, std::vector<geometry_msgs::PoseStamped>& global_plan){
+  //prune global plan; 比较global pose 和global plan
+  void prunePlan(const geometry_msgs::PoseStamped& global_pose, std::vector<geometry_msgs::PoseStamped>& plan, std::vector<geometry_msgs::PoseStamped>& global_plan) {
     ROS_ASSERT(global_plan.size() >= plan.size());
     std::vector<geometry_msgs::PoseStamped>::iterator it = plan.begin();
     std::vector<geometry_msgs::PoseStamped>::iterator global_it = global_plan.begin();
@@ -79,7 +79,7 @@ namespace base_local_planner {
       double x_diff = global_pose.pose.position.x - w.pose.position.x;
       double y_diff = global_pose.pose.position.y - w.pose.position.y;
       double distance_sq = x_diff * x_diff + y_diff * y_diff;
-      if(distance_sq < 1){
+      if(distance_sq < 1){ //1m 以外的全部修剪
         ROS_DEBUG("Nearest waypoint to <%f, %f> is <%f, %f>\n", global_pose.pose.position.x, global_pose.pose.position.y, w.pose.position.x, w.pose.position.y);
         break;
       }
@@ -95,7 +95,7 @@ namespace base_local_planner {
       const costmap_2d::Costmap2D& costmap,
       const std::string& global_frame,
       std::vector<geometry_msgs::PoseStamped>& transformed_plan){
-    transformed_plan.clear();
+    transformed_plan.clear(); //返回值
 
     if (global_plan.empty()) {
       ROS_ERROR("Received plan with zero length");
@@ -113,6 +113,7 @@ namespace base_local_planner {
       tf.transform(global_pose, robot_pose, plan_pose.header.frame_id);
 
       //we'll discard points on the plan that are outside the local costmap
+      //基本上就是local_costmap 一半边长
       double dist_threshold = std::max(costmap.getSizeInCellsX() * costmap.getResolution() / 2.0,
                                        costmap.getSizeInCellsY() * costmap.getResolution() / 2.0);
 
@@ -120,7 +121,7 @@ namespace base_local_planner {
       double sq_dist_threshold = dist_threshold * dist_threshold;
       double sq_dist = 0;
 
-      //we need to loop to a point on the plan that is within a certain distance of the robot
+      //we need to loop to a point on the plan that is within a certain     of the robot
       while(i < (unsigned int)global_plan.size()) {
         double x_diff = robot_pose.pose.position.x - global_plan[i].pose.position.x;
         double y_diff = robot_pose.pose.position.y - global_plan[i].pose.position.y;
@@ -231,9 +232,9 @@ namespace base_local_planner {
     return false;
   }
 
-  bool stopped(const nav_msgs::Odometry& base_odom, 
+  bool stopped(const nav_msgs::Odometry& base_odom,
       const double& rot_stopped_velocity, const double& trans_stopped_velocity){
-    return fabs(base_odom.twist.twist.angular.z) <= rot_stopped_velocity 
+    return fabs(base_odom.twist.twist.angular.z) <= rot_stopped_velocity
       && fabs(base_odom.twist.twist.linear.x) <= trans_stopped_velocity
       && fabs(base_odom.twist.twist.linear.y) <= trans_stopped_velocity;
   }

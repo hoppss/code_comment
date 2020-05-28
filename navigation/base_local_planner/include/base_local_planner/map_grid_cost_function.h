@@ -49,6 +49,7 @@ namespace base_local_planner {
  * when scoring a trajectory according to the values in mapgrid, we can take
  *return the value of the last point (if no of the earlier points were in
  * return collision), the sum for all points, or the product of all (non-zero) points
+ * Aggregation: 聚合
  */
 enum CostAggregationType { Last, Sum, Product};
 

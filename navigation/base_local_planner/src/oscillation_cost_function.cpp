@@ -81,7 +81,7 @@ void OscillationCostFunction::resetOscillationFlagsIfPossible(const Eigen::Vecto
     resetOscillationFlags();
   }
 }
-
+  //strafe: 扫射
 void OscillationCostFunction::resetOscillationFlags() {
   strafe_pos_only_ = false;
   strafe_neg_only_ = false;

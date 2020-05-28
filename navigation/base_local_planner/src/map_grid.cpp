@@ -99,7 +99,7 @@ namespace base_local_planner{
     }
   }
 
-
+  //Used to update the distance of a cell in path distance computation
   inline bool MapGrid::updatePathCell(MapCell* current_cell, MapCell* check_cell,
       const costmap_2d::Costmap2D& costmap){
 
@@ -168,7 +168,9 @@ namespace base_local_planner{
     }
   }
 
-  //update what map cells are considered path based on the global_plan
+  //update what map cells are considered localpath [based on the global_plan]
+  //计算path_dist_queue
+  //计算local_costmap 局部target 位置
   void MapGrid::setTargetCells(const costmap_2d::Costmap2D& costmap,
       const std::vector<geometry_msgs::PoseStamped>& global_plan) {
     sizeCheck(costmap.getSizeInCellsX(), costmap.getSizeInCellsY());
@@ -259,7 +261,7 @@ namespace base_local_planner{
   }
 
 
-
+  //计算local_costmap上每个cell到local_goal的距离
   void MapGrid::computeTargetDistance(queue<MapCell*>& dist_queue, const costmap_2d::Costmap2D& costmap){
     MapCell* current_cell;
     MapCell* check_cell;

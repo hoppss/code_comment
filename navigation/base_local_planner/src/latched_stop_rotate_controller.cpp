@@ -35,6 +35,8 @@ LatchedStopRotateController::~LatchedStopRotateController() {}
  * returns true if we have passed the goal position.
  * Meaning we might have overshot on the position beyond tolerance, yet still return true.
  * Also goal orientation might not yet be true
+ * 先到位置检查xy_goal_tolerance, 锁住!  xy_tolerance_latch set to true
+ * latch_xy_goal_tolerance_   这个参数需要为真 ??
  */
 bool LatchedStopRotateController::isPositionReached(LocalPlannerUtil* planner_util,
     const geometry_msgs::PoseStamped& global_pose) {
@@ -62,6 +64,7 @@ bool LatchedStopRotateController::isPositionReached(LocalPlannerUtil* planner_ut
 /**
  * returns true if we have passed the goal position and have reached goal orientation.
  * Meaning we might have overshot on the position beyond tolerance, yet still return true.
+ * 位置和朝向 都到
  */
 bool LatchedStopRotateController::isGoalReached(LocalPlannerUtil* planner_util,
     OdometryHelperRos& odom_helper,
@@ -195,7 +198,7 @@ bool LatchedStopRotateController::rotateToGoal(
   return false;
 
 }
-
+//function 作为一个参数, c11回调的参考
 bool LatchedStopRotateController::computeVelocityCommandsStopRotate(geometry_msgs::Twist& cmd_vel,
     Eigen::Vector3f acc_lim,
     double sim_period,

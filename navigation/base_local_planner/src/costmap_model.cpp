@@ -40,11 +40,11 @@
 
 using namespace std;
 using namespace costmap_2d;
-
+//WorldModel -> CostmapModel  costmap 计算foortprint cost
 namespace base_local_planner {
   CostmapModel::CostmapModel(const Costmap2D& ma) : costmap_(ma) {}
 
-  double CostmapModel::footprintCost(const geometry_msgs::Point& position, const std::vector<geometry_msgs::Point>& footprint, 
+  double CostmapModel::footprintCost(const geometry_msgs::Point& position, const std::vector<geometry_msgs::Point>& footprint,
       double inscribed_radius, double circumscribed_radius){
 
     //used to put things into grid coordinates
@@ -85,7 +85,7 @@ namespace base_local_planner {
       line_cost = lineCost(x0, x1, y0, y1);
       footprint_cost = std::max(line_cost, footprint_cost);
 
-      //if there is an obstacle that hits the line... we know that we can return false right away 
+      //if there is an obstacle that hits the line... we know that we can return false right away
       if(line_cost < 0)
         return -1.0;
     }

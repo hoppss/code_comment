@@ -3,7 +3,19 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/usr/include",
+                "/opt/ros/melodic/include",
+                "${env:HOME}/glite_ws/devel/include",
+                "${env:HOME}/beetle_robot/devel/include",
+                "${env:HOME}/glite_ws/src/ginger_actuator/include",
+                "${env:HOME}/glite_ws/src/ginger_chassis/include",
+                "${env:HOME}/glite_ws/src/ginger_msgs/include",
+                "${env:HOME}/glite_ws/src/ginger_sensors/rplidar_ros/include",
+                "${env:HOME}/glite_ws/src/ginger_navigation/include",
+                "${env:HOME}/glite_ws/src/base_controller/include",
+                "${env:HOME}/glite_ws/src/ginger_actuator/ActuatorController_SDK/serialPort_Ethernet2CAN_sdk_v3.0.0/sdk/include",
+                "${env:HOME}/glite_ws/src/lpms_ig1/libs"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

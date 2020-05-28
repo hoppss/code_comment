@@ -38,7 +38,7 @@ namespace base_local_planner{
 
   MapCell::MapCell()
     : cx(0), cy(0),
-      target_dist(DBL_MAX),
+      target_dist(DBL_MAX),  //#define DBL_MAX   std::numeric_limits<double>::max()  // 1.7976931348623157e+308
       target_mark(false),
       within_robot(false)
   {}

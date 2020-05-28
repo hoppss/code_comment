@@ -278,7 +278,7 @@ PointGrid::PointGrid(double size_x, double size_y, double resolution, geometry_m
     geometry_msgs::Point32 check_point;
     double sq_dist = DBL_MAX;
     double neighbor_sq_dist = DBL_MAX;
-    
+
     //left
     if(gx > 0){
       check_point.x = lower_left.x;
@@ -461,7 +461,7 @@ PointGrid::PointGrid(double size_x, double size_y, double resolution, geometry_m
       if(vector_angle < 0)
         vector_angle = 2 * M_PI + vector_angle;
 
-      double total_rads = laser_scan.angle_max - laser_scan.angle_min; 
+      double total_rads = laser_scan.angle_max - laser_scan.angle_min;
 
       //if this point lies outside of the scan field of view... it is not in the scan
       if(vector_angle < 0 || vector_angle >= total_rads)

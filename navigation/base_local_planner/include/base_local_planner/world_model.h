@@ -48,6 +48,8 @@ namespace base_local_planner {
    * @class WorldModel
    * @brief An interface the trajectory controller uses to interact with the
    * world regardless of the underlying world model.
+   * 只有方法沒有數據成員,更多和footprint 位置和cost有关
+   * CostmapModel 继承
    */
   class WorldModel{
     public:
@@ -58,6 +60,7 @@ namespace base_local_planner {
        * @param  inscribed_radius The radius of the inscribed circle of the robot
        * @param  circumscribed_radius The radius of the circumscribed circle of the robot
        * @return Positive if all the points lie outside the footprint, negative otherwise
+       * 纯虚函数, 下面的工具重载函数都指向了这个函数
        */
       virtual double footprintCost(const geometry_msgs::Point& position, const std::vector<geometry_msgs::Point>& footprint,
           double inscribed_radius, double circumscribed_radius) = 0;
@@ -68,7 +71,7 @@ namespace base_local_planner {
         double sin_th = sin(theta);
         std::vector<geometry_msgs::Point> oriented_footprint;
 
-        //1.获取移动后的机器人外轮廓位置
+        //1.获取移动后的机器人外轮廓世界坐标
         for(unsigned int i = 0; i < footprint_spec.size(); ++i){
           geometry_msgs::Point new_pt;
           new_pt.x = x + (footprint_spec[i].x * cos_th - footprint_spec[i].y * sin_th);
@@ -98,7 +101,7 @@ namespace base_local_planner {
        */
       double footprintCost(const geometry_msgs::Point& position, const std::vector<geometry_msgs::Point>& footprint,
           double inscribed_radius, double circumscribed_radius, double extra) {
-        return footprintCost(position, footprint, inscribed_radius, circumscribed_radius); 
+        return footprintCost(position, footprint, inscribed_radius, circumscribed_radius);
       }
 
       /**
